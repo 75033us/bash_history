@@ -1,0 +1,18 @@
+# source this file in ~/.bashrc
+merge_history()
+{
+	# remember current history
+	history -w /tmp/history
+	tac /tmp/history | awk '!x[$0]++' | tac > /tmp/history_distinct
+
+	# merge with original history
+	grep -x -v -F -f /tmp/history_distinct ~/.bash_history | awk '!x[$0]++' > /tmp/history_remote
+	cat /tmp/history_remote /tmp/history_distinct > ~/.bash_history
+
+	# reload history
+	history -c
+	history -r
+
+	# show the new merged_history
+	history
+}
